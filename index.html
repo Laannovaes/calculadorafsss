@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Matemática</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+                    
+        body {
+            background-color: #eaf6f6;
+            color: #35495e; 
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #2088c9;
+            color: #ffffff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .btn-custom {
+            background: linear-gradient(145deg, #2088c9, #17a2b8);
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(145deg, #17a2b8, #2088c9);
+            transform: translateY(-2px);
+            
+        }
+
+        .info-box {
+            background-color: #d2f4f4;
+            color: #1b4b5c;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control {
+            background-color: #ffffff;
+            color: #35495e;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            color: #35495e;
+            border-color: #2088c9;
+        }
+
+        .form-label {
+            text-align: center;
+            display: block;
+        }
+
+        .card-title {
+            text-align: center;
+        }
+
+        #results {
+            text-align: center;
+            color: #1b4b5c;
+        }
+
+        .logo {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+        }
+        canvas {
+    max-width: 100%;
+    height: auto;
+        }
+          body {
+           flex-direction: column;
+           padding: 10px;
+     }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="Faculdade_Santissimo.png" alt="Logo Faculdade Santíssimo" class="logo">
+        <div class="col-md-8">
+            <div class="info-box text-center">
+                <h5>Calculadora FSSS</h5>
+                <button class="btn-custom" onclick="showCalculator('afim')">Estudo do sinal da função Afim</button>
+                <button class="btn-custom" onclick="showCalculator('coefAfim')">Coeficientes e gráfico da função Afim</button>
+                <button class="btn-custom" onclick="showCalculator('raizesQuadratica')">Cálculo de raízes da função Quadrática</button>
+                <button class="btn-custom" onclick="showCalculator('maxMinQuadratica')">Máximo/Mínimo da função Quadrática</button>
+                <button class="btn-custom" onclick="showCalculator('coefQuadratica')">Coeficientes e gráfico da função Quadrática</button>
+                <button class="btn-custom" onclick="showCalculator('graficoExponencial')">Gráfico de uma função exponencial</button>
+            </div>
+            <div id="calculator-container"></div>
+        </div>
+        <footer style="text-align: center; margin-top: 20px; color: #35495e; font-size: 14px;">
+            Copyright © 2024 Faculdade Santíssimo Sacramento. Todos os direitos reservados. Desenvolvido pela turma de S.I.
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Função para mostrar o conteúdo de cada calculadora
+        function showCalculator(theme) {
+            let htmlContent = '';
+            if (theme === 'afim') {
+                htmlContent = `
+                    <div class="card">
+                        <div class="card-header">
+                        <div id="graph-container"></div>
+                            <h3 class="card-title">Estudo do Sinal da Função Afim</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="afim-form">
+                                <div class="mb-3">
+                                    <label for="m" class="form-label">Valor de m</label>
+                                    <input type="number" class="form-control" id="m" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="n" class="form-label">Valor de n</label>
+                                    <input type="number" class="form-control" id="n" required>
+                                </div>
+                                <button type="submit" class="btn btn-custom">Calcular</button>
+                            </form>
+                            <div id="result-afim"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (theme === 'coefAfim') {
+                htmlContent = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Coeficientes e Gráfico da Função Afim</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="coefAfim-form">
+                                <div class="mb-3">
+                                    <label for="m" class="form-label">Coeficiente m</label>
+                                    <input type="number" class="form-control" id="m-coef" required>
+                                    
+                                </div>
+                                <div class="mb-3">
+                                    <label for="n" class="form-label">Coeficiente n</label>
+                                    <input type="number" class="form-control" id="n-coef" required>
+                                </div>
+                                <button type="submit" class="btn btn-custom">Calcular Gráfico</button>
+                            </form>
+                            <div id="result-coefAfim"></div>
+                            <canvas id="graph-afim"></canvas>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (theme === 'raizesQuadratica') {
+                htmlContent = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Cálculo de Raízes da Função Quadrática</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="raizes-form">
+                                <div class="mb-3">
+                                    <label for="a" class="form-label">Valor de a</label>
+                                    <input type="number" class="form-control" id="a-raizes" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="b" class="form-label">Valor de b</label>
+                                    <input type="number" class="form-control" id="b-raizes" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="c" class="form-label">Valor de c</label>
+                                    <input type="number" class="form-control" id="c-raizes" required>
+                                </div>
+                                <button type="submit" class="btn btn-custom">Calcular Raízes</button>
+                            </form>
+                            <div id="result-raizes"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (theme === 'maxMinQuadratica') {
+                htmlContent = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Máximo/Mínimo da Função Quadrática</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="quadratic-form">
+                                <div class="mb-3">
+                                    <label for="a" class="form-label">Valor de a</label>
+                                    <input type="number" class="form-control" id="a-quadratic" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="b" class="form-label">Valor de b</label>
+                                    <input type="number" class="form-control" id="b-quadratic" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="c" class="form-label">Valor de c</label>
+                                    <input type="number" class="form-control" id="c-quadratic" required>
+                                </div>
+                                <button type="submit" class="btn btn-custom">Calcular Máximo/Mínimo</button>
+                            </form>
+                            <div id="result-quadratic"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (theme === 'coefQuadratica') {
+                htmlContent = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Coeficientes e Gráfico da Função Quadrática</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="coefQuadratica-form">
+                                <div class="mb-3">
+                                    <label for="a" class="form-label">Coeficiente a</label>
+                                    <input type="number" class="form-control" id="a-coefQuadratica" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="b" class="form-label">Coeficiente b</label>
+                                    <input type="number" class="form-control" id="b-coefQuadratica" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="c" class="form-label">Coeficiente c</label>
+                                    <input type="number" class="form-control" id="c-coefQuadratica" required>
+                                </div>
+                                <button type="submit" class="btn btn-custom">Calcular Gráfico</button>
+                            </form>
+                            <div id="result-coefQuadratica"></div>
+                            <canvas id="graph-quadratica"></canvas>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (theme === 'graficoExponencial') {
+                htmlContent = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Gráfico de uma Função Exponencial</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="exp-form">
+                                <div class="mb-3">
+                                    <label for="a" class="form-label">Valor de a</label>
+                                    <input type="number" class="form-control" id="a-exp" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="b" class="form-label">Valor de b</label>
+                                    <input type="number" class="form-control" id="b-exp" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="c" class="form-label">Valor de c</label>
+                                    <input type="number" class="form-control" id="c-exp" required>
+                                </div>
+                                <button type="submit" class="btn btn-custom">Gerar Gráfico</button>
+                            </form>
+                            <div id="result-exp"></div>
+                            <canvas id="graph-exp"></canvas>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById("calculator-container").innerHTML = htmlContent;
+        }
+        document.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    if (e.target.id === "afim-form") {
+        const m = parseFloat(document.getElementById("m").value);
+        const n = parseFloat(document.getElementById("n").value);
+        let result = "";
+
+        if (m > 0) {
+            result = `Função crescente: y = ${m}x + ${n} (m > 0)`;
+        } else if (m < 0) {
+            result = `Função decrescente: y = ${m}x + ${n} (m < 0)`;
+        } else {
+            result = `Função constante: y = ${m}x + ${n} (m = 0)`;
+        }
+
+        result += m > 0 ? " e positiva" : " e negativa";
+        document.getElementById("result-afim").innerText = result;
+    }
+
+    else if (e.target.id === "raizes-form") {
+        const a = parseFloat(document.getElementById("a-raizes").value);
+        const b = parseFloat(document.getElementById("b-raizes").value);
+        const c = parseFloat(document.getElementById("c-raizes").value);
+
+        if (a === 0) {
+            document.getElementById("result-raizes").innerHTML = "<span style='color: red;'>Não é uma função quadrática (o Valor de 'a' não pode ser zero).</span>";
+            return;
+        }
+
+        const delta = Math.pow(b, 2) - 4 * a * c;
+        let result = '';
+
+        if (delta < 0) {
+            result = 'Não há raízes reais';
+        } else {
+            const x1 = (-b + Math.sqrt(delta)) / (2 * a);
+            const x2 = (-b - Math.sqrt(delta)) / (2 * a);
+            result = `Raízes: x1 = ${x1.toFixed(2)}, x2 = ${x2.toFixed(2)}`;
+        }
+
+        document.getElementById("result-raizes").innerText = result;
+    }
+
+    else if (e.target.id === "quadratic-form") {
+        const a = parseFloat(document.getElementById("a-quadratic").value);
+        const b = parseFloat(document.getElementById("b-quadratic").value);
+        const c = parseFloat(document.getElementById("c-quadratic").value);
+
+        if (a === 0) {
+            document.getElementById("result-quadratic").innerHTML = `<span style="color: red;">Não é uma função quadrática (o valor de 'a' não pode ser 0)</span>`;
+            return;
+        }
+
+        const xVertex = -b / (2 * a);
+        const yVertex = (4 * a * c - Math.pow(b, 2)) / (4 * a);
+        const type = a > 0 ? "Mínimo" : "Máximo";
+
+        document.getElementById("result-quadratic").innerText = `${type} no vértice (x, y): (${xVertex.toFixed(2)}, ${yVertex.toFixed(2)})`;
+    }
+
+    else if (e.target.id === "coefAfim-form") {
+        const m = parseFloat(document.getElementById("m-coef").value);
+        const n = parseFloat(document.getElementById("n-coef").value);
+        const ctx = document.getElementById('graph-afim').getContext('2d');
+        const labels = Array.from({length: 21}, (_, i) => i - 10);
+        const data = labels.map(x => m * x + n);
+
+        const chart = Chart.getChart('graph-afim'); // Obter o gráfico existente
+        if (chart) {
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data;
+            chart.update(); // Atualiza o gráfico
+        } else {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `y = ${m}x + ${n}`,
+                        data: data,
+                        borderColor: '#2088c9',
+                        backgroundColor: 'rgba(32, 136, 201, 0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'x'
+                            }
+                        },
+                        y: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'y'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        grid: {
+                            color: '#e5e5e5',
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById("result-coefAfim").innerText = `Gráfico da função afim: y = ${m}x + ${n}`;
+    }
+
+    else if (e.target.id === "coefQuadratica-form") {
+        const a = parseFloat(document.getElementById("a-coefQuadratica").value);
+        const b = parseFloat(document.getElementById("b-coefQuadratica").value);
+        const c = parseFloat(document.getElementById("c-coefQuadratica").value);
+
+        if (a === 0) {
+            document.getElementById("result-coefQuadratica").innerHTML = `<span style="color: red;">Não é uma função quadrática (o valor de 'a' não pode ser 0)</span>`;
+            return;
+        }
+
+        const ctx = document.getElementById('graph-quadratica').getContext('2d');
+        const labels = Array.from({length: 21}, (_, i) => i - 10);
+        const data = labels.map(x => a * Math.pow(x, 2) + b * x + c);
+
+        const chart = Chart.getChart('graph-quadratica'); // Obter o gráfico existente
+        if (chart) {
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data;
+            chart.update(); // Atualiza o gráfico
+        } else {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `y = ${a}x² + ${b}x + ${c}`,
+                        data: data,
+                        borderColor: '#2088c9',
+                        backgroundColor: 'rgba(32, 136, 201, 0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'x'
+                            }
+                        },
+                        y: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'y'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        grid: {
+                            color: '#e5e5e5',
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById("result-coefQuadratica").innerText = `Gráfico da função quadrática: y = ${a}x² + ${b}x + ${c}`;
+    }
+
+    else if (e.target.id === "exp-form") {
+        const a = parseFloat(document.getElementById("a-exp").value);
+        const b = parseFloat(document.getElementById("b-exp").value);
+        const c = parseFloat(document.getElementById("c-exp").value);
+        
+        const ctx = document.getElementById('graph-exp').getContext('2d');
+        const labels = Array.from({length: 21}, (_, i) => i - 10);
+        const data = labels.map(x => a * Math.exp(b * x) + c);
+
+        const chart = Chart.getChart('graph-exp'); // Obter o gráfico existente
+        if (chart) {
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data;
+            chart.update(); // Atualiza o gráfico
+        } else {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `y = ${a}e^(${b}x) + ${c}`,
+                        data: data,
+                        borderColor: '#2088c9',
+                        backgroundColor: 'rgba(32, 136, 201, 0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'x'
+                            }
+                        },
+                        y: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'y'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        grid: {
+                            color: '#e5e5e5',
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById("result-exp").innerText = `Gráfico da função exponencial: y = ${a}e^(${b}x) + ${c}`;
+    }
+});
+
+    </script>
+</body>
+</html>
